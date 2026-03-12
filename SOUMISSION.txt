@@ -1,0 +1,252 @@
+========================================
+PROJET: API TODO ASP.NET CORE + MONGODB
+========================================
+
+Étudiant: [Votre Nom]
+Date: 12 Mars 2026
+Cours: ASP.NET Core - Sécurité des Applications
+
+========================================
+1. LIEN GITHUB (PUBLIC)
+========================================
+
+Repository: https://github.com/Rh-Man/TodoApi.git
+
+Le repository contient:
+- Code source complet de l'API
+- Dockerfiles et docker-compose.yml
+- Documentation complète (README.md)
+- Guide de déploiement (DEPLOYMENT_GUIDE.md)
+- Preuve de réussite (PREUVE_REUSSITE.md)
+- Collection Postman pour les tests
+- Scripts de test automatisés
+
+========================================
+2. INSTRUCTIONS D'EXÉCUTION
+========================================
+
+Voir le fichier README.md dans le repository pour les instructions détaillées.
+
+MÉTHODE RAPIDE (Docker Compose):
+1. Cloner le repository: git clone https://github.com/Rh-Man/TodoApi.git
+2. Naviguer dans le dossier: cd TodoApi
+3. Lancer: docker-compose up --build
+4. Accéder à: http://localhost:5000/swagger
+
+MÉTHODE LOCALE:
+1. Démarrer MongoDB: docker run -d -p 27017:27017 --name mongodb mongo:latest
+2. Naviguer dans TodoApi: cd TodoApi
+3. Lancer l'API: dotnet run
+4. Accéder à: http://localhost:5110/swagger
+
+========================================
+3. FONCTIONNALITÉS RÉALISÉES
+========================================
+
+✅ API Web ASP.NET Core 10.0 avec MongoDB
+   - CRUD complet pour les Todos
+   - Architecture en couches (Controllers, Services, Models)
+   - Base de données MongoDB avec MongoDB.Driver
+
+✅ Authentification JWT
+   - Inscription d'utilisateurs avec hachage BCrypt
+   - Connexion avec génération de tokens JWT
+   - Tokens avec expiration (7 jours)
+   - Claims: ID utilisateur, nom, email, rôle
+
+✅ Autorisation par Rôles
+   - Rôle Admin: Peut créer, modifier, supprimer des Todos
+   - Rôle User: Peut uniquement lire les Todos
+   - Attributs [Authorize] et [Authorize(Roles = "Admin")]
+
+✅ Sécurité
+   - Mots de passe hachés avec BCrypt (salt automatique)
+   - Tokens JWT signés avec HMAC-SHA256
+   - Validation des tokens sur chaque requête
+   - Protection contre la sur-publication (overposting)
+   - HTTPS en production
+
+✅ Déploiement Docker
+   - Dockerfile multi-stage optimisé
+   - Docker Compose avec MongoDB
+   - Variables d'environnement configurables
+   - Volumes persistants pour les données
+
+✅ Documentation
+   - README.md complet avec exemples
+   - Swagger UI intégré (/swagger)
+   - Collection Postman (TodoApi.postman_collection.json)
+   - Guide de déploiement pour plusieurs plateformes
+   - Scripts de test PowerShell
+
+========================================
+4. TESTS RÉALISÉS
+========================================
+
+Tous les tests ont été exécutés avec succès:
+
+✅ Test 1: Inscription Admin
+   POST /api/auth/register
+   Résultat: Utilisateur créé avec ID MongoDB
+
+✅ Test 2: Connexion Admin
+   POST /api/auth/login
+   Résultat: Token JWT reçu
+
+✅ Test 3: Création Todo (Admin)
+   POST /api/todos
+   Résultat: Todo créé avec succès
+
+✅ Test 4: Lecture Todos (Authentifié)
+   GET /api/todos
+   Résultat: Liste des todos récupérée
+
+✅ Test 5: Mise à jour Todo (Admin)
+   PUT /api/todos/{id}
+   Résultat: Todo mis à jour (204 No Content)
+
+✅ Test 6: Suppression Todo (Admin)
+   DELETE /api/todos/{id}
+   Résultat: Todo supprimé (204 No Content)
+
+✅ Test 7: Tentative création par User
+   POST /api/todos (avec token User)
+   Résultat: 403 Forbidden (comme attendu)
+
+Voir PREUVE_REUSSITE.md pour les détails complets.
+
+========================================
+5. TECHNOLOGIES UTILISÉES
+========================================
+
+Backend:
+- ASP.NET Core 10.0
+- C# 13
+
+Base de données:
+- MongoDB 7.0
+- MongoDB.Driver 3.7.0
+
+Sécurité:
+- JWT (Microsoft.AspNetCore.Authentication.JwtBearer 10.0.4)
+- BCrypt.Net-Next 4.1.0
+- System.IdentityModel.Tokens.Jwt 8.16.0
+
+Documentation:
+- Swagger/OpenAPI (Swashbuckle.AspNetCore 10.1.5)
+
+Déploiement:
+- Docker
+- Docker Compose
+
+========================================
+6. STRUCTURE DU PROJET
+========================================
+
+TodoApi/
+├── Controllers/
+│   ├── AuthController.cs      # Authentification (register/login)
+│   └── TodosController.cs     # CRUD Todos avec autorisation
+├── Models/
+│   ├── User.cs                # Modèle utilisateur avec rôle
+│   ├── TodoItem.cs            # Modèle Todo
+│   ├── LoginRequest.cs        # DTO Login
+│   ├── RegisterRequest.cs     # DTO Register
+│   └── TodoDatabaseSettings.cs # Configuration MongoDB
+├── Services/
+│   ├── AuthService.cs         # Logique authentification + JWT
+│   ├── UserService.cs         # Accès données utilisateurs
+│   └── TodoService.cs         # Accès données todos
+├── Program.cs                 # Configuration app (JWT, MongoDB, Swagger)
+├── appsettings.json          # Configuration (MongoDB, JWT secret)
+├── Dockerfile                # Image Docker
+└── TodoApi.csproj            # Dépendances NuGet
+
+========================================
+7. ENDPOINTS DE L'API
+========================================
+
+Authentification (Public):
+- POST /api/auth/register - Inscription
+- POST /api/auth/login    - Connexion
+
+Todos (Authentifié):
+- GET    /api/todos       - Lire tous (User + Admin)
+- GET    /api/todos/{id}  - Lire un (User + Admin)
+- POST   /api/todos       - Créer (Admin uniquement)
+- PUT    /api/todos/{id}  - Modifier (Admin uniquement)
+- DELETE /api/todos/{id}  - Supprimer (Admin uniquement)
+
+========================================
+8. SÉCURITÉ IMPLÉMENTÉE
+========================================
+
+1. Hachage des mots de passe avec BCrypt
+2. Tokens JWT avec signature HMAC-SHA256
+3. Autorisation basée sur les rôles
+4. Validation des tokens sur chaque requête
+5. Protection des endpoints sensibles
+6. HTTPS en production
+7. Secrets dans variables d'environnement
+8. Validation des entrées
+
+========================================
+9. DÉPLOIEMENT
+========================================
+
+Le projet peut être déployé sur:
+- Docker (n'importe quel serveur)
+- Azure Container Instances
+- AWS ECS
+- Heroku
+- GitLab CI/CD
+- DigitalOcean
+- Tout service supportant Docker
+
+Voir DEPLOYMENT_GUIDE.md pour les instructions détaillées.
+
+========================================
+10. FICHIERS IMPORTANTS
+========================================
+
+- README.md                    : Instructions complètes
+- PREUVE_REUSSITE.md          : Preuves et captures
+- DEPLOYMENT_GUIDE.md         : Guide de déploiement
+- INSTRUCTIONS_FINALES.md     : Checklist et conseils
+- TodoApi.postman_collection.json : Tests Postman
+- test-api-simple.ps1         : Tests automatisés
+- docker-compose.yml          : Orchestration Docker
+
+========================================
+11. PREUVES DE RÉUSSITE
+========================================
+
+Voir le fichier PREUVE_REUSSITE.md dans le repository pour:
+- Captures d'écran des tests
+- Résultats des exécutions
+- Démonstration de la sécurité
+- Preuve du fonctionnement complet
+
+========================================
+12. COURS "SÉCURISEZ VOTRE APPLICATION .NET"
+========================================
+
+Ce projet démontre la maîtrise de:
+✅ Authentification sécurisée (JWT)
+✅ Autorisation basée sur les rôles
+✅ Hachage des mots de passe (BCrypt)
+✅ Protection des endpoints
+✅ Validation des tokens
+✅ Gestion des secrets
+✅ Bonnes pratiques de sécurité .NET
+
+========================================
+CONCLUSION
+========================================
+
+Le projet est complet, testé et prêt pour la production.
+Tous les objectifs ont été atteints avec succès.
+
+Repository: https://github.com/Rh-Man/TodoApi.git
+
+Merci!
